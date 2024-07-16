@@ -1,29 +1,52 @@
 #include "lists.h"
 
 /**
- * print_dlistint - prints elements of list.
- * @h: pointer to the head of the list
+ * insert_dnodeint_at_index - inset node at a given position
+ * @h: head
+ * @idx: index
+ * @n: number to insert
  *
- * Return: number of nodes
+ * Return: the address of the new node, or NULL if it failed
  */
 
-size_t print_dlistint(const dlistint_t *h)
+dlistint_t *insert_dnodeint_at_index(dlistint_t **h, unsigned int idx, int n)
 {
+	dlistint_t *temp, *current;
+	unsigned int i;
 
-	int counter = 0;
+	temp = malloc(sizeof(dlistint_t));
+	if (temp == NULL)
+		return (NULL);
+
+	temp->n = n;
+	temp->next = NULL;
+	temp->prev = NULL;
 
 	if (h == NULL)
-		return (counter);
+		return (NULL);
 
-	while (h->prev != NULL)
-		h = h->prev;
-
-	while (h != NULL)
+	current = *h;
+	if (idx == 0)
 	{
-		printf("%d\n", h->n);
-		h = h->next;
-		counter++;
+		if (current != NULL)
+		{
+			temp->next = current;
+			current->prev = temp;
+		}
+		*h = temp;
+		return (temp);
 	}
-
-	return (counter);
+	for (i = 0; i < idx - 1 && current != NULL; i++)
+		current = current->next;
+	if (current == NULL && i < idx - 1)
+	{
+		free(temp);
+		return (NULL);
+	}
+	temp->next = current->next;
+	temp->prev = current;
+	if (current->next != NULL)
+		current->next->prev = temp;
+	current->next = temp;
+	return (temp);
 }
